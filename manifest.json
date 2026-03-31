@@ -1,0 +1,9 @@
+{
+  "id": "sidebar-presets",
+  "name": "Sidebar Presets",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "우측 사이드바 레이아웃을 프리셋으로 저장하고 토글 버튼으로 전환합니다.",
+  "author": "plutonix",
+  "isDesktopOnly": true
+}

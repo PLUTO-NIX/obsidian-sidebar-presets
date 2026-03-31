@@ -1,0 +1,43 @@
+/* Sidebar Presets */
+
+/* 비활성 프리셋의 탭 그룹 숨김 */
+[data-active-preset="A"] > [data-sidebar-preset="B"],
+[data-active-preset="B"] > [data-sidebar-preset="A"] {
+  display: none !important;
+}
+
+/* 토글 버튼 */
+.sidebar-preset-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-s);
+  color: var(--icon-color);
+  opacity: var(--icon-opacity);
+  flex-shrink: 0;
+}
+
+.sidebar-preset-toggle:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--icon-color-hover);
+  opacity: var(--icon-opacity-hover);
+}
+
+.sidebar-preset-toggle.is-custom {
+  color: var(--interactive-accent);
+  opacity: 1;
+}
+
+.sidebar-preset-num {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-monospace);
+}
