@@ -22,6 +22,7 @@ class SidebarPresetsPlugin extends obsidian.Plugin {
 		);
 		this.toggleBtnEl = null;
 		this._knownTabGroups = new Set();
+		this._wasCollapsed = false;
 
 		this.addCommand({
 			id: 'toggle-right-sidebar-preset',
@@ -39,6 +40,19 @@ class SidebarPresetsPlugin extends obsidian.Plugin {
 		this.registerEvent(
 			this.app.workspace.on('layout-change', () => {
 				this.tagNewTabGroups();
+
+				// 사이드바가 접혔다가 펼쳐지면 활성 프리셋 너비 재적용
+				const rightSplit = this.app.workspace.rightSplit;
+				const isCollapsed = rightSplit.collapsed;
+				if (this._wasCollapsed && !isCollapsed) {
+					const activeWidth = this.settings.widths?.[this.settings.activeSlot];
+					if (activeWidth) {
+						rightSplit.width = activeWidth;
+						rightSplit.containerEl.style.width = activeWidth + 'px';
+					}
+				}
+				this._wasCollapsed = isCollapsed;
+
 				if (!this.toggleBtnEl || !this.toggleBtnEl.isConnected) {
 					this.injectButton();
 				}
@@ -181,10 +195,23 @@ class SidebarPresetsPlugin extends obsidian.Plugin {
 		this.applyVisibility();
 		this.ensureHeaderButtons();
 
-		// 너비 복원
+		// 너비 복원 (트랜지션 포함)
 		if (this.settings.widths[next]) {
-			rightSplit.width = this.settings.widths[next];
-			rightSplit.containerEl.style.width = this.settings.widths[next] + 'px';
+			const el = rightSplit.containerEl;
+			el.classList.add('sidebar-preset-transitioning');
+			// 현재 너비를 명시적으로 고정 후 다음 프레임에서 변경 → 트랜지션 트리거
+			el.style.width = (this.settings.widths[curr] || el.offsetWidth) + 'px';
+			requestAnimationFrame(() => {
+				rightSplit.width = this.settings.widths[next];
+				el.style.width = this.settings.widths[next] + 'px';
+				const cleanup = () => {
+					el.classList.remove('sidebar-preset-transitioning');
+					el.removeEventListener('transitionend', cleanup);
+				};
+				el.addEventListener('transitionend', cleanup, { once: true });
+				// 폴백: transitionend가 안 올 경우 200ms 후 정리
+				setTimeout(cleanup, 120);
+			});
 		}
 
 		// 그룹 수 저장 (재시작 시 프리셋 복원용)

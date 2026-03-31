@@ -1,9 +1,20 @@
 /* Sidebar Presets */
 
-/* 비활성 프리셋의 탭 그룹 숨김 */
+/* 비활성 프리셋의 탭 그룹 숨김 (display:none 대신 visibility로 스크롤 위치 보존) */
 [data-active-preset="A"] > [data-sidebar-preset="B"],
 [data-active-preset="B"] > [data-sidebar-preset="A"] {
-  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  flex: 0 0 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* 프리셋 전환 시 너비 트랜지션 (드래그 리사이즈에는 영향 없음) */
+.mod-right-split.sidebar-preset-transitioning {
+  transition: width 0.1s linear !important;
 }
 
 /* 토글 버튼 */
